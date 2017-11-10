@@ -1,0 +1,8 @@
+[package]
+authors = ["Jack Cushman <jcushman@law.harvard.edu>"]
+name = "coolsounds"
+version = "0.1.0"
+
+[dependencies]
+rand = "0.3.18"
+rodio = "0.5.2"
