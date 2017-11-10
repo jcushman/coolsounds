@@ -47,8 +47,11 @@ impl Iterator for RandomTone {
         // once per second, pick a new target
         if self.num_sample % 48000 == 0 {
             println!("{}", self.freq);
-            self.target_freq = *rand::thread_rng().choose(&self.freqs).unwrap();
-            self.chirp_speed = rand::distributions::Range::new(0, 48000).ind_sample(&mut rand::thread_rng());
+            let mut rng = rand::thread_rng();
+            // choose a random freq from freqs, down up to two octaves or up one octave
+            self.target_freq = *rand::thread_rng().choose(&self.freqs).unwrap() * (2.0 as f32).powi(Range::new(-2, 2).ind_sample(&mut rng));
+            // take between zero and one second to switch to new tone
+            self.chirp_speed = Range::new(0, 48000).ind_sample(&mut rng);
         }
 
         Some(value.sin())

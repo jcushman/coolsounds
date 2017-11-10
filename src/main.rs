@@ -24,7 +24,7 @@ fn main() {
 
     let freqs = [523.25, 587.33, 880.00, 659.25, 783.99];  // C, D, E, G, A
 
-    let sources = (0..3).map(|_| RandomTone::new(freqs.to_vec())).collect::<Vec<_>>();
+    let sources = (0..5).map(|_| RandomTone::new(freqs.to_vec())).collect::<Vec<_>>();
     let _sinks = sources.into_iter().map(|x| sink_for_source(&endpoint, x)).collect::<Vec<Sink>>();
 
     thread::sleep(Duration::from_secs(600));
