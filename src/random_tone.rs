@@ -1,8 +1,6 @@
-extern crate rand;
-
 use std::f32::consts::PI;
-use self::rand::Rng;
-use self::rand::distributions::{Range, IndependentSample};
+use rand::{Rng, thread_rng};
+use rand::distributions::{Range, IndependentSample};
 use rodio::Source;
 use std::time::Duration;
 
@@ -12,18 +10,20 @@ pub struct RandomTone {
     freqs: Vec<f32>,
     num_sample: usize,
     target_freq: f32,
-    chirp_speed: i32,
+    chirp_step_size: f32,
+    chirp_max_length: i32,
 }
 
 impl RandomTone {
     #[inline]
-    pub fn new(freqs: Vec<f32>) -> RandomTone {
+    pub fn new(freqs: Vec<f32>, chirp_max_length: i32) -> RandomTone {
         RandomTone {
             freq: freqs[0],
             target_freq: freqs[0],
             freqs,
             num_sample: 0,
-            chirp_speed: 100,
+            chirp_step_size: 1.0,
+            chirp_max_length,
         }
     }
 }
@@ -40,18 +40,18 @@ impl Iterator for RandomTone {
         // move freq towards target_freq
         if self.freq != self.target_freq {
             let diff = self.target_freq - self.freq;
-            let step_size = self.target_freq / self.chirp_speed as f32;
-            self.freq += diff.min(step_size).max(-step_size);
+            self.freq += diff.min(self.chirp_step_size).max(-self.chirp_step_size);
         }
 
         // once per second, pick a new target
         if self.num_sample % 48000 == 0 {
             println!("{}", self.freq);
-            let mut rng = rand::thread_rng();
+            let mut rng = thread_rng();
             // choose a random freq from freqs, down up to two octaves or up one octave
-            self.target_freq = *rand::thread_rng().choose(&self.freqs).unwrap() * (2.0 as f32).powi(Range::new(-2, 2).ind_sample(&mut rng));
+            self.target_freq = *thread_rng().choose(&self.freqs).unwrap() * (2.0 as f32).powi(Range::new(-2, 2).ind_sample(&mut rng));
             // take between zero and one second to switch to new tone
-            self.chirp_speed = Range::new(0, 48000).ind_sample(&mut rng);
+            let gap = (self.target_freq - self.freq).abs();
+            self.chirp_step_size = gap / Range::new(1, self.chirp_max_length).ind_sample(&mut rng) as f32;
         }
 
         Some(value.sin())
