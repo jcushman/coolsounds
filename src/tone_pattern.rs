@@ -1,7 +1,9 @@
-use rodio::{Decoder, Source, Sample};
+use rodio::Source;
 use rodio::source::{SineWave, TakeDuration};
 use std::time::Duration;
 
+
+// Play a sequence of notes with durations:
 pub struct TonePattern {
     tones: Vec<Vec<u32>>,
     index: usize,

@@ -4,6 +4,8 @@ use rand::distributions::{Range, IndependentSample};
 use rodio::Source;
 use std::time::Duration;
 
+
+// Move from sine wave to sine wave in a chirpy way, by sliding the sine frequency once per second
 #[derive(Clone, Debug)]
 pub struct RandomTone {
     freq: f32,
@@ -45,7 +47,6 @@ impl Iterator for RandomTone {
 
         // once per second, pick a new target
         if self.num_sample % 48000 == 0 {
-            println!("{}", self.freq);
             let mut rng = thread_rng();
             // choose a random freq from freqs, down up to two octaves or up one octave
             self.target_freq = *thread_rng().choose(&self.freqs).unwrap() * (2.0 as f32).powi(Range::new(-2, 2).ind_sample(&mut rng));

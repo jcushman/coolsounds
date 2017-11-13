@@ -5,6 +5,8 @@ use std::fs::File;
 use rand::{Rng, thread_rng};
 use rand::distributions::{Range, IndependentSample};
 
+
+// Load a set of clips from a file and randomly play them back forever:
 pub struct FileSampler {
     data: Vec<i16>,
     channels: u16,

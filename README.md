@@ -19,5 +19,7 @@ Run code:
 
 (Using more efficient release build seems to help with audio playback -- debug build uses a lot of CPU.)
 
+Write output to file:
 
+    cargo run --release -- -o output_file.wav
 
